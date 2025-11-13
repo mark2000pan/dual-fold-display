@@ -1,55 +1,85 @@
 <!DOCTYPE html>
 <html lang="sk">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Dvojitý displej (Fold)</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulácia Fold displeja</title>
 <style>
-  body {
+  * {
     margin: 0;
-    overflow: hidden;
-    background: black;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 0;
+    box-sizing: border-box;
   }
-  img {
+  body {
+    background: black;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 100vh;
-    width: 200vw; /* obrázok je dvojnásobne široký */
-    object-fit: cover;
-    transition: opacity 0.5s;
+  }
+  .fold {
+    position: relative;
+    width: 90vw;
+    height: 60vh;
+    display: flex;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+  }
+  .panel {
+    width: 50%;
+    height: 100%;
+    background-image: url('https://picsum.photos/2000/1000?random=25');
+    background-size: 200% 100%;
+    background-repeat: no-repeat;
+    transition: transform 1s ease-in-out, box-shadow 1s;
+  }
+  .left {
+    background-position: left center;
+    transform-origin: right;
+    border-right: 2px solid rgba(255,255,255,0.2);
+  }
+  .right {
+    background-position: right center;
+    transform-origin: left;
+    border-left: 2px solid rgba(255,255,255,0.2);
+  }
+  .fold.closed .left {
+    transform: rotateY(160deg);
+    box-shadow: -20px 0 40px rgba(0,0,0,0.7);
+  }
+  .fold.closed .right {
+    transform: rotateY(-160deg);
+    box-shadow: 20px 0 40px rgba(0,0,0,0.7);
+  }
+  button {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #222;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 16px;
   }
 </style>
 </head>
 <body>
-  <img id="foldImage" src="https://picsum.photos/2000/1000?random=1" alt="Fold Image">
+  <div class="fold" id="fold">
+    <div class="panel left"></div>
+    <div class="panel right"></div>
+  </div>
+  <button onclick="toggleFold()">📱 Otvoriť / Zavrieť</button>
 
 <script>
-  // Zistí, či je to ľavá alebo pravá strana
-  const params = new URLSearchParams(window.location.search);
-  const side = params.get('side') || 'left'; // left alebo right
-
-  const img = document.getElementById('foldImage');
-  img.style.objectPosition = side === 'left' ? 'left center' : 'right center';
-  img.style.clipPath = side === 'left'
-    ? 'inset(0 50% 0 0)'
-    : 'inset(0 0 0 50%)';
-
-  // Striedanie obrázkov každých 10 sekúnd
-  const images = [
-    "https://picsum.photos/2000/1000?random=11",
-    "https://picsum.photos/2000/1000?random=12",
-    "https://picsum.photos/2000/1000?random=13"
-  ];
-  let i = 0;
-  setInterval(() => {
-    i = (i + 1) % images.length;
-    img.style.opacity = 0;
-    setTimeout(() => {
-      img.src = images[i];
-      img.style.opacity = 1;
-    }, 500);
-  }, 10000);
+  const fold = document.getElementById('fold');
+  let closed = false;
+  function toggleFold() {
+    closed = !closed;
+    fold.classList.toggle('closed', closed);
+  }
 </script>
 </body>
 </html>
