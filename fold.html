@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Dvojitý displej (Fold)</title>
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  img {
+    height: 100vh;
+    width: 200vw; /* obrázok je dvojnásobne široký */
+    object-fit: cover;
+    transition: opacity 0.5s;
+  }
+</style>
+</head>
+<body>
+  <img id="foldImage" src="https://picsum.photos/2000/1000?random=1" alt="Fold Image">
+
+<script>
+  // Zistí, či je to ľavá alebo pravá strana
+  const params = new URLSearchParams(window.location.search);
+  const side = params.get('side') || 'left'; // left alebo right
+
+  const img = document.getElementById('foldImage');
+  img.style.objectPosition = side === 'left' ? 'left center' : 'right center';
+  img.style.clipPath = side === 'left'
+    ? 'inset(0 50% 0 0)'
+    : 'inset(0 0 0 50%)';
+
+  // Striedanie obrázkov každých 10 sekúnd
+  const images = [
+    "https://picsum.photos/2000/1000?random=11",
+    "https://picsum.photos/2000/1000?random=12",
+    "https://picsum.photos/2000/1000?random=13"
+  ];
+  let i = 0;
+  setInterval(() => {
+    i = (i + 1) % images.length;
+    img.style.opacity = 0;
+    setTimeout(() => {
+      img.src = images[i];
+      img.style.opacity = 1;
+    }, 500);
+  }, 10000);
+</script>
+</body>
+</html>
